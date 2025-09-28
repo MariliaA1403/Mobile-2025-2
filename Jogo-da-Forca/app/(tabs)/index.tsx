@@ -1,17 +1,21 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from "react-native";
 
-const palavras = [
-  "ELEFANTE", "GIRAFA", "CANGURU", "TARTARUGA", "HIPOPOTAMO",
-  "JACARE", "COALA", "PANDA", "PINGUIM", "CAMELO",
-  "GORILA", "LEAO", "TIGRE", "ZEBRA", "RINOCERONTE"
+// Lista de animais
+const animais = [
+  "ELEFANTE", "TIGRE", "LEAO", "GIRAFA", "CROCODILO",
+  "HIPOPOTAMO", "URSO", "COALA", "PANDA", "LONTRA",
+  "RAPOSA", "GORILA", "CANGURU", "CAVALO", "TARTARUGA",
+  "ABELHA", "BORBOLETA", "PAVAO", "ZEBRA", "CAMELO",
+  "PINGUIM", "FENNEC", "MACACO", "LEOPARDO", "ONCA",
+  "JACARE", "RINOCERONTE", "HUMMINGBIRD", "TUBARAO", "PEIXE"
 ];
 
 const maxTentativas = 6;
-const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 export default function App() {
-  const [palavra, setPalavra] = useState(palavras[Math.floor(Math.random() * palavras.length)]);
+  const [palavra, setPalavra] = useState(animais[Math.floor(Math.random() * animais.length)]);
   const [letrasCorretas, setLetrasCorretas] = useState<string[]>([]);
   const [letrasErradas, setLetrasErradas] = useState<string[]>([]);
   const [tentativas, setTentativas] = useState(maxTentativas);
@@ -43,30 +47,31 @@ export default function App() {
   const status = checarFim();
 
   const reiniciar = () => {
-    const novaPalavra = palavras[Math.floor(Math.random() * palavras.length)];
+    const novaPalavra = animais[Math.floor(Math.random() * animais.length)];
     setPalavra(novaPalavra);
     setLetrasCorretas([]);
     setLetrasErradas([]);
     setTentativas(maxTentativas);
   };
 
-  const desenharForca = () => (
-    <View style={styles.forcaContainer}>
-      <View style={[styles.bar, { height: 200, backgroundColor: "#444" }]} />
-      <View style={[styles.bar, { width: 120, marginLeft: -1, backgroundColor: "#444" }]} />
-      <View style={[styles.bar, { height: 40, marginLeft: 120, backgroundColor: "#444" }]} />
-      {tentativas <= 5 && <View style={[styles.cabeca, { backgroundColor: "#e74c3c" }]} />}
-      {tentativas <= 4 && <View style={[styles.corpo, { backgroundColor: "#e67e22" }]} />}
-      {tentativas <= 3 && <View style={[styles.bracoEsq, { backgroundColor: "#f1c40f" }]} />}
-      {tentativas <= 2 && <View style={[styles.bracoDir, { backgroundColor: "#f1c40f" }]} />}
-      {tentativas <= 1 && <View style={[styles.pernaEsq, { backgroundColor: "#3498db" }]} />}
-      {tentativas <= 0 && <View style={[styles.pernaDir, { backgroundColor: "#3498db" }]} />}
-    </View>
-  );
+  // Boneco simples com emojis de animais
+  const desenharForca = () => {
+    return (
+      <View style={styles.forcaContainer}>
+        <Text style={styles.forcaBase}>🪵</Text>
+        {tentativas <= 5 && <Text style={styles.boneco}>😀</Text>}
+        {tentativas <= 4 && <Text style={styles.boneco}>👕</Text>}
+        {tentativas <= 3 && <Text style={styles.boneco}>✋</Text>}
+        {tentativas <= 2 && <Text style={styles.boneco}>✋</Text>}
+        {tentativas <= 1 && <Text style={styles.boneco}>👖</Text>}
+        {tentativas <= 0 && <Text style={styles.boneco}>👟</Text>}
+      </View>
+    );
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Jogo da Forca 🐾</Text>
+      <Text style={styles.title}>Jogo da Forca 🐾 - Animais</Text>
 
       {desenharForca()}
 
@@ -74,13 +79,12 @@ export default function App() {
       <Text style={styles.tentativas}>Tentativas restantes: {tentativas}</Text>
 
       <View style={styles.letrasContainer}>
-        {letras.map((l) => (
+        {alfabeto.map((l) => (
           <TouchableOpacity
             key={l}
             style={[
               styles.letraBotao,
-              letrasCorretas.includes(l) && { backgroundColor: "#2ecc71" },
-              letrasErradas.includes(l) && { backgroundColor: "#e74c3c" },
+              (letrasCorretas.includes(l) || letrasErradas.includes(l)) && styles.letraBotaoUsada
             ]}
             onPress={() => escolherLetra(l)}
             disabled={status !== null || letrasCorretas.includes(l) || letrasErradas.includes(l)}
@@ -93,47 +97,31 @@ export default function App() {
       <Text style={styles.lista}>Letras corretas: {letrasCorretas.join(", ")}</Text>
       <Text style={styles.lista}>Letras erradas: {letrasErradas.join(", ")}</Text>
 
-      {status === "vitória" && <Text style={styles.vitoria}>🎉 Você venceu! 🎉</Text>}
-      {status === "derrota" && <Text style={styles.derrota}>💀 Fim de jogo! Palavra: {palavra}</Text>}
+      {status === "vitória" && <Text style={styles.vitoria}>Parabéns! Você venceu! 🎉 Palavra: {palavra}</Text>}
+      {status === "derrota" && <Text style={styles.derrota}>Fim de jogo! Palavra: {palavra}</Text>}
 
       <TouchableOpacity style={styles.botaoReiniciar} onPress={reiniciar}>
-        <Text style={styles.textoBotao}>Reiniciar 🌀</Text>
+        <Text style={styles.textoBotao}>Reiniciar Jogo</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, justifyContent: "center", alignItems: "center", padding: 20, backgroundColor: "#f5f6fa" },
-  title: { fontSize: 34, fontWeight: "bold", marginBottom: 20, color: "#34495e" },
-  palavra: { fontSize: 32, letterSpacing: 5, marginVertical: 20, color: "#2c3e50" },
-  tentativas: { fontSize: 18, marginBottom: 10, color: "#34495e" },
+  container: { flexGrow: 1, justifyContent: "center", alignItems: "center", padding: 20, backgroundColor: "#e0f7fa" },
+  title: { fontSize: 28, fontWeight: "bold", marginBottom: 20, color: "#00796b", textAlign: "center" },
+  palavra: { fontSize: 28, letterSpacing: 4, marginVertical: 20 },
+  tentativas: { fontSize: 18, marginBottom: 10 },
   letrasContainer: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", marginVertical: 10 },
-  letraBotao: {
-    borderWidth: 1,
-    borderColor: "#34495e",
-    padding: 12,
-    margin: 4,
-    borderRadius: 8,
-    width: 45,
-    height: 45,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#ecf0f1"
-  },
-  letraTexto: { fontSize: 18, fontWeight: "bold", color: "#2c3e50" },
-  lista: { fontSize: 16, marginVertical: 5, color: "#34495e" },
-  vitoria: { fontSize: 24, color: "#27ae60", marginTop: 20, fontWeight: "bold" },
-  derrota: { fontSize: 24, color: "#c0392b", marginTop: 20, fontWeight: "bold" },
-  botaoReiniciar: { backgroundColor: "#2980b9", padding: 12, marginTop: 20, borderRadius: 8 },
+  letraBotao: { borderWidth: 1, borderColor: "#00796b", padding: 10, margin: 4, borderRadius: 4, width: 40, alignItems: "center", backgroundColor: "#b2dfdb" },
+  letraBotaoUsada: { backgroundColor: "#80cbc4" },
+  letraTexto: { fontSize: 18, fontWeight: "bold", color: "#004d40" },
+  lista: { fontSize: 16, marginVertical: 5 },
+  vitoria: { fontSize: 22, color: "green", marginTop: 20, fontWeight: "bold" },
+  derrota: { fontSize: 22, color: "red", marginTop: 20, fontWeight: "bold" },
+  botaoReiniciar: { backgroundColor: "#00796b", padding: 12, marginTop: 20, borderRadius: 5 },
   textoBotao: { color: "#fff", fontSize: 18, fontWeight: "bold" },
-  forcaContainer: { alignItems: "flex-start", marginVertical: 20 },
-  bar: { backgroundColor: "#333" },
-  cabeca: { width: 40, height: 40, borderRadius: 20, position: "absolute", top: 40, left: 100 },
-  corpo: { width: 10, height: 80, position: "absolute", top: 80, left: 118 },
-  bracoEsq: { width: 60, height: 10, position: "absolute", top: 90, left: 60, transform: [{ rotate: "-45deg" }] },
-  bracoDir: { width: 60, height: 10, position: "absolute", top: 90, left: 120, transform: [{ rotate: "45deg" }] },
-  pernaEsq: { width: 60, height: 10, position: "absolute", top: 155, left: 60, transform: [{ rotate: "45deg" }] },
-  pernaDir: { width: 60, height: 10, position: "absolute", top: 155, left: 118, transform: [{ rotate: "-45deg" }] },
+  forcaContainer: { width: 200, height: 150, marginVertical: 20, alignItems: "center", justifyContent: "center" },
+  forcaBase: { fontSize: 40 },
+  boneco: { fontSize: 30 },
 });
-
