@@ -1,2 +1,2 @@
-import App from "../../App"; // caminho relativo até App.tsx
+import App from "../../App";
 export default App;
