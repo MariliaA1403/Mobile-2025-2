@@ -1,6 +1,6 @@
 {
   "name": "jogo-da-forca",
-  "main": "App.tsx",
+  "main": "node_modules/expo/AppEntry.js",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
